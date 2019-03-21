@@ -160,8 +160,8 @@ namespace Snake
                 else if (Input.KeyPressed(Keys.Down) && Settings.direction != Direction.Up)
                     Settings.direction = Direction.Down;
 
-                if (Math.Abs(Snake[0].X - enemyAI.X) >= 5)
-                    PathFinding();
+                //if (Math.Abs(Snake[0].X - enemyAI.X) >= 5)
+                //    PathFinding();
                 MoveBrick();
                 MovePlayer();
 
@@ -639,177 +639,184 @@ namespace Snake
             player.controls.play();
         }
 
-        private void PathFinding()
-        {
-            // Starting point
-            Circle startNode = new Circle { X = enemyAI.X, Y = enemyAI.Y };
-            openList.Add(startNode);
+
+        /* Ignore bottom part, not yet finished */
+        /* This is the part of Enemy AI */
+        /* It is messy now, just ignore it */
+        
+        //private void PathFinding()
+        //{
+        //    // Starting point
+        //    Circle startNode = new Circle { X = enemyAI.X, Y = enemyAI.Y };
+        //    openList.Add(startNode);
 
           
-            // Target point
-            Circle targetNode = FindTargetNode(startNode);
+        //    // Target point
+        //    Circle targetNode = FindTargetNode(startNode);
 
-            int i = 0; // Debugging purpose
-
-
-            //// Loop
-            //while (openList.Count > 0 && i != 1000)
-            //{
-            // Get node with lowest z value
-            Circle node = FindNodeLowestF();
-            if (node.X == startNode.X)
-            {
-                GetPath(startNode, startNode);
-                return;
-            }
-            // Check if the node is target's node
-            if (node.X == targetNode.X &&
-               node.Y == targetNode.Y)
-            {
-                GetPath(node, startNode);
-                //break;
-            }
-
-            // remove node from openList
-            // then add it in closedList
-            openList.Remove(node);
-            closedList.Add(node);
+        //    int i = 0; // Debugging purpose
 
 
-            List<Circle> neighbours = GetNeighbours(node);
+        //    //// Loop
+        //    //while (openList.Count > 0 && i != 1000)
+        //    //{
+        //    // Get node with lowest z value
+        //    Circle node = FindNodeLowestF();
+        //    if (node.X == startNode.X)
+        //    {
+        //        GetPath(startNode, startNode);
+        //        return;
+        //    }
+        //    // Check if the node is target's node
+        //    if (node.X == targetNode.X &&
+        //       node.Y == targetNode.Y)
+        //    {
+        //        GetPath(node, startNode);
+        //        //break;
+        //    }
 
-            foreach (Circle n in neighbours)
-            {
-                if (!((n.X == Portal_1.X && n.Y == Portal_1.Y) ||
-                     (n.X == Portal_2.X && n.Y == Portal_2.Y) ||
-                      closedList.Contains(n)))
-                {
-                    if (!openList.Contains(n))
-                    {
-                        openList.Add(n);
-                        n.parent = node;
-
-                        // Calculate G, H, and F
-                        n.Gvalue = node.Gvalue + 10;
-                        n.Hvalue = CalculateManhattanDistance(n, targetNode);
-                        n.Fvalue = n.Gvalue + n.Hvalue;
-                    }
-                    else
-                    {
-                        if (node.Gvalue + 10 < n.Gvalue)
-                        {
-                            n.parent = node;
-
-                            // Recalculate G & F
-                            n.Gvalue = node.Gvalue + 10;
-                            n.Fvalue = n.Gvalue + n.Hvalue;
-                        }
-                    }
-                }
-            }
-            //    i++;
-            //}
-            // If it is not on the open list, add it to open list. 
-            // Make the currentNode parent to this square
-            // Record F, G, and H costs of square
-
-            // It if it on open list, check to see if this path to that square is better
-            // If it has lower G cost in total, change parent to the current square
-            // Recalculate G & F
-
-            // Loop stop when
-            // Target square is in closed list
-            // Or open list is empty
-        }
-
-        private void GetPath (Circle targetNode, Circle startNode)
-        {
-            //Circle nextNode = targetNode;
-
-            //while(nextNode.parent != startNode)
-            //{
-            //    nextNode = nextNode.parent;
-            //}
-
-            //// Move enemyAI one step forward
-            //enemyAI.X = nextNode.X;
-            //enemyAI.Y = nextNode.Y;
-
-            enemyAI.X++;
-            enemyAI.Y++;
-        }
-
-        private int CalculateManhattanDistance(Circle currentNode, Circle targetNode)
-        {
-            int currentToTargetDistanceX = Math.Abs(targetNode.X - currentNode.X);
-            int currentToTargetDistanceY = Math.Abs(targetNode.Y - currentNode.Y);
-            int sumCurrentToTargetDistance = currentToTargetDistanceX + currentToTargetDistanceY;
-
-            return sumCurrentToTargetDistance;
-        }
+        //    // remove node from openList
+        //    // then add it in closedList
+        //    openList.Remove(node);
+        //    closedList.Add(node);
 
 
-        /* Get lowest Z value and return back */
-        private Circle FindNodeLowestF()
-        {
-            Circle lowestNode = new Circle();
-            lowestNode.Fvalue = int.MaxValue;
+        //    List<Circle> neighbours = GetNeighbours(node);
 
-            foreach(Circle element in openList)
-            {
-                if(element.Fvalue < lowestNode.Fvalue )
-                {
-                    lowestNode = element;
-                }
-            }
-            return lowestNode;
-        }
+        //    foreach (Circle n in neighbours)
+        //    {
+        //        if (!((n.X == Portal_1.X && n.Y == Portal_1.Y) ||
+        //             (n.X == Portal_2.X && n.Y == Portal_2.Y) ||
+        //              closedList.Contains(n)))
+        //        {
+        //            if (!openList.Contains(n))
+        //            {
+        //                openList.Add(n);
+        //                n.parent = node;
+
+        //                // Calculate G, H, and F
+        //                n.Gvalue = node.Gvalue + 10;
+        //                n.Hvalue = CalculateManhattanDistance(n, targetNode);
+        //                n.Fvalue = n.Gvalue + n.Hvalue;
+        //            }
+        //            else
+        //            {
+        //                if (node.Gvalue + 10 < n.Gvalue)
+        //                {
+        //                    n.parent = node;
+
+        //                    // Recalculate G & F
+        //                    n.Gvalue = node.Gvalue + 10;
+        //                    n.Fvalue = n.Gvalue + n.Hvalue;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    //    i++;
+        //    //}
+        //    // If it is not on the open list, add it to open list. 
+        //    // Make the currentNode parent to this square
+        //    // Record F, G, and H costs of square
+
+        //    // It if it on open list, check to see if this path to that square is better
+        //    // If it has lower G cost in total, change parent to the current square
+        //    // Recalculate G & F
+
+        //    // Loop stop when
+        //    // Target square is in closed list
+        //    // Or open list is empty
+        //}
+
+        //private void GetPath (Circle targetNode, Circle startNode)
+        //{
+        //    //Circle nextNode = targetNode;
+
+        //    //while(nextNode.parent != startNode)
+        //    //{
+        //    //    nextNode = nextNode.parent;
+        //    //}
+
+        //    //// Move enemyAI one step forward
+        //    //enemyAI.X = nextNode.X;
+        //    //enemyAI.Y = nextNode.Y;
+
+        //    enemyAI.X++;
+        //    enemyAI.Y++;
+        //}
+
+        //private int CalculateManhattanDistance(Circle currentNode, Circle targetNode)
+        //{
+        //    int currentToTargetDistanceX = Math.Abs(targetNode.X - currentNode.X);
+        //    int currentToTargetDistanceY = Math.Abs(targetNode.Y - currentNode.Y);
+        //    int sumCurrentToTargetDistance = currentToTargetDistanceX + currentToTargetDistanceY;
+
+        //    return sumCurrentToTargetDistance;
+        //}
 
 
-        /* Get all the four square position from its parents */
-        private List<Circle> GetNeighbours(Circle currentNode)
-        {
-            List<Circle> neighbours = new List<Circle>();
+        ///* Get lowest Z value and return back */
+        //private Circle FindNodeLowestF()
+        //{
+        //    Circle lowestNode = new Circle();
+        //    lowestNode.Fvalue = int.MaxValue;
 
-            Circle neighbour = new Circle { X = currentNode.X + 1, Y = currentNode.Y };
-            neighbours.Add(neighbour);
-
-            neighbour = new Circle { X = currentNode.X - 1, Y = currentNode.Y };
-            neighbours.Add(neighbour);
-
-            neighbour = new Circle { X = currentNode.X, Y = currentNode.Y + 1 };
-            neighbours.Add(neighbour);
-
-            neighbour = new Circle { X = currentNode.X, Y = currentNode.Y - 1 };
-            neighbours.Add(neighbour);
-
-            return neighbours;
-        }
+        //    foreach(Circle element in openList)
+        //    {
+        //        if(element.Fvalue < lowestNode.Fvalue )
+        //        {
+        //            lowestNode = element;
+        //        }
+        //    }
+        //    return lowestNode;
+        //}
 
 
-        /* Find the closet Target Node.
-         * This function will decide either track snake's head or snake's tail.
-         */
-        private Circle FindTargetNode(Circle currentNode)
-        {
-            Circle targetNode = new Circle() { X = Portal_1.X, Y = Portal_1.Y };
+        ///* Get all the four square position from its parents */
+        //private List<Circle> GetNeighbours(Circle currentNode)
+        //{
+        //    List<Circle> neighbours = new List<Circle>();
 
-            //// Find number of square needed to go to head of snake
-            //int distanceToHeadX = Math.Abs(currentNode.X - Snake[0].X);
-            //int distanceToHeadY = Math.Abs(currentNode.Y - Snake[0].Y);
-            //int sumDistanceToHead = distanceToHeadX + distanceToHeadY;
+        //    Circle neighbour = new Circle { X = currentNode.X + 1, Y = currentNode.Y };
+        //    neighbours.Add(neighbour);
 
-            //// Find number of square needed to go to tail of snake
-            //int distanceToTailX = Math.Abs(currentNode.X - Snake[Snake.Count - 1].X);
-            //int distanceToTailY = Math.Abs(currentNode.Y - Snake[Snake.Count - 1].Y);
-            //int sumDistanceToTail = distanceToTailX + distanceToTailY;
+        //    neighbour = new Circle { X = currentNode.X - 1, Y = currentNode.Y };
+        //    neighbours.Add(neighbour);
 
-            //if (sumDistanceToHead < sumDistanceToTail)
-            //    targetNode = Snake[0];
-            //else
-            //    targetNode = Snake[Snake.Count - 1];
+        //    neighbour = new Circle { X = currentNode.X, Y = currentNode.Y + 1 };
+        //    neighbours.Add(neighbour);
 
-            return targetNode;
-        }
+        //    neighbour = new Circle { X = currentNode.X, Y = currentNode.Y - 1 };
+        //    neighbours.Add(neighbour);
+
+        //    return neighbours;
+        //}
+
+
+        ///* Find the closet Target Node.
+        // * This function will decide either track snake's head or snake's tail.
+        // */
+        //private Circle FindTargetNode(Circle currentNode)
+        //{
+        //    Circle targetNode = new Circle() { X = Portal_1.X, Y = Portal_1.Y };
+
+        //    //// Find number of square needed to go to head of snake
+        //    //int distanceToHeadX = Math.Abs(currentNode.X - Snake[0].X);
+        //    //int distanceToHeadY = Math.Abs(currentNode.Y - Snake[0].Y);
+        //    //int sumDistanceToHead = distanceToHeadX + distanceToHeadY;
+
+        //    //// Find number of square needed to go to tail of snake
+        //    //int distanceToTailX = Math.Abs(currentNode.X - Snake[Snake.Count - 1].X);
+        //    //int distanceToTailY = Math.Abs(currentNode.Y - Snake[Snake.Count - 1].Y);
+        //    //int sumDistanceToTail = distanceToTailX + distanceToTailY;
+
+        //    //if (sumDistanceToHead < sumDistanceToTail)
+        //    //    targetNode = Snake[0];
+        //    //else
+        //    //    targetNode = Snake[Snake.Count - 1];
+
+        //    return targetNode;
+        //}
+
+        
     }
 }
