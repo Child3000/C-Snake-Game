@@ -190,7 +190,7 @@ namespace Snake
                                       Snake[i].Y * Settings.Height,
                                       Settings.Width, Settings.Height));
 
-                    bool specialFoodAppear = Settings.Score % 1000 == 0 && Settings.Score != 0;
+                    bool specialFoodAppear = Settings.Score % 500 == 0 && Settings.Score != 0;
 
                     // Draw EnemyAI
                     canvas.FillRectangle(Brushes.GhostWhite,
@@ -375,7 +375,7 @@ namespace Snake
                         Snake[i].Y = Portal_1.Y;
                     }
 
-                    if (Settings.Score % 1000 == 0 && Settings.Score != 0)
+                    if (Settings.Score % 500 == 0 && Settings.Score != 0)
                     {
                         // Detect collision with Special Food
                         if (Snake[i].X == specialFood.X &&
@@ -546,73 +546,71 @@ namespace Snake
                      food.X == Portal_2.X && food.Y == Portal_2.Y);
 
 
-            if (Settings.Score != 0)
+            if (Settings.Score != 0 && Settings.Score % 500 == 0)
             {
-                if (Settings.Score % 500 == 0 && Settings.Speed < Settings.MAX_SPEED)
+                if (Settings.Speed < Settings.MAX_SPEED)
                 {
                     Settings.Speed += 10;
                     gameTimer.Interval = 3000 / Settings.Speed;
-                }
 
-                if (Settings.Score % 1000 == 0)
-                {
+                }
                     // Make sure the coordinate of special food is not overlapped with food's.
                     Random ran_food = new Random();
                     RandomNum = ran_food.Next(0, 3);
-                    switch (RandomNum)
-                    {
-                        case 0:
-                            do
-                            {
-                                GenerateSpecialFood();
+                switch (RandomNum)
+                {
+                    case 0:
+                        do
+                        {
+                            GenerateSpecialFood();
 
-                            } while ((food.X == specialFood.X && food.Y == specialFood.Y) ||
-                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
-                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
+                        } while ((food.X == specialFood.X && food.Y == specialFood.Y) ||
+                                 (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
+                                 (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
 
-                            break;
-                        case 1:
+                        break;
+                    case 1:
 
-                            do
-                            {
-                                GenerateSlowFood();
+                        do
+                        {
+                            GenerateSlowFood();
 
-                            } while ((food.X == slowFood.X && food.Y == slowFood.Y) ||
-                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
-                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
+                        } while ((food.X == slowFood.X && food.Y == slowFood.Y) ||
+                                 (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
+                                 (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
 
-                            break;
-                        case 2:
+                        break;
+                    case 2:
 
-                            do
-                            {
-                                GenerateFastFood();
+                        do
+                        {
+                            GenerateFastFood();
 
-                            } while ((food.X == fastFood.X && food.Y == fastFood.Y) ||
-                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
-                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
+                        } while ((food.X == fastFood.X && food.Y == fastFood.Y) ||
+                                 (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
+                                 (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
 
-                            break;
+                        break;
 
-                        case 3:
+                    case 3:
 
-                            do
-                            {
-                                GenerateHealthFood();
+                        do
+                        {
+                            GenerateHealthFood();
 
-                            } while ((food.X == HealthFood.X && food.Y == HealthFood.Y) ||
-                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
-                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
+                        } while ((food.X == HealthFood.X && food.Y == HealthFood.Y) ||
+                                 (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
+                                 (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
 
-                            break;
-                    }
+                        break;
                 }
+                
             }
         }
 
         private void EatSpecial()
         {
-            if (Settings.Score % 1000 == 0 && Settings.Score != 0)
+            if (Settings.Score % 500 == 0 && Settings.Score != 0)
             {
                 // Gain 500 bonus scores
                 Settings.Score += Settings.BonusPoints;
@@ -635,7 +633,7 @@ namespace Snake
 
         private void PlayBackgroundMusic()
         {
-            player.URL = url + "hk.mp3";
+            player.URL = "D:/Users/Desktop/hk/hk.mp3";
             while (player.settings.volume > 40)
                 player.settings.volume -= 2;
 
