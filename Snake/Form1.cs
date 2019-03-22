@@ -13,6 +13,7 @@ namespace Snake
 
         WindowsMediaPlayer player = new WindowsMediaPlayer();
         WindowsMediaPlayer player2 = new WindowsMediaPlayer();
+        string url = "D:/Users/Desktop/SnakeGame/Sound Effect/";
 
 
         // Enemy AI parts
@@ -517,9 +518,9 @@ namespace Snake
             Random ranSound = new Random();
             int ranSoundNum = ranSound.Next(0, 2);
 
-            player[0] = new SoundPlayer("D:/Users/Desktop/Sound Effect/wEat01.wav");
-            player[1] = new SoundPlayer("D:/Users/Desktop/Sound Effect/wEat02.wav");
-            player[2] = new SoundPlayer("D:/Users/Desktop/Sound Effect/wEat03.wav");
+            player[0] = new SoundPlayer( url + "wEat01.wav");
+            player[1] = new SoundPlayer(url + "wEat02.wav");
+            player[2] = new SoundPlayer(url + "wEat03.wav");
 
             //player[ranSoundNum] = new SoundPlayer();
             player[ranSoundNum].Play();
@@ -626,7 +627,7 @@ namespace Snake
 
         private void PlayYummy()
         {
-            player2.URL = "D:/Users/Desktop/Sound Effect/mYum01.mp3";
+            player2.URL = url + "mYum01.mp3";
             player.settings.volume = 55;
             // Adjust Window Media Player's Volume
             player2.controls.play();
@@ -634,7 +635,7 @@ namespace Snake
 
         private void PlayBackgroundMusic()
         {
-            player.URL = "D:/Users/Desktop/Sound Effect/hk.mp3";
+            player.URL = url + "hk.mp3";
             while (player.settings.volume > 40)
                 player.settings.volume -= 2;
 
