@@ -16,6 +16,7 @@
 
     public class Settings
     {
+        public const int MAX_SPEED = 50;
         public const int MAX_MOVE = 800;
         public static int Width { get; set; }
         public static int Height { get; set; }

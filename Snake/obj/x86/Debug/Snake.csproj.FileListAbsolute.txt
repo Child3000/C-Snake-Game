@@ -28,3 +28,17 @@ D:\Users\Desktop\Snake\bin\Debug\AxInterop.WMPLib.dll
 D:\Users\Desktop\Snake\obj\x86\Debug\Interop.WMPLib.dll
 D:\Users\Desktop\Snake\obj\x86\Debug\AxInterop.WMPLib.dll
 D:\Users\Desktop\Snake\obj\x86\Debug\Snake.csproj.ResolveComReference.cache
+D:\Users\Desktop\SnakeGame\Snake\bin\Debug\Snake.exe
+D:\Users\Desktop\SnakeGame\Snake\bin\Debug\Snake.pdb
+D:\Users\Desktop\SnakeGame\Snake\bin\Debug\Interop.WMPLib.dll
+D:\Users\Desktop\SnakeGame\Snake\bin\Debug\AxInterop.WMPLib.dll
+D:\Users\Desktop\SnakeGame\Snake\obj\x86\Debug\Snake.csprojAssemblyReference.cache
+D:\Users\Desktop\SnakeGame\Snake\obj\x86\Debug\Interop.WMPLib.dll
+D:\Users\Desktop\SnakeGame\Snake\obj\x86\Debug\AxInterop.WMPLib.dll
+D:\Users\Desktop\SnakeGame\Snake\obj\x86\Debug\Snake.csproj.ResolveComReference.cache
+D:\Users\Desktop\SnakeGame\Snake\obj\x86\Debug\Snake.Form1.resources
+D:\Users\Desktop\SnakeGame\Snake\obj\x86\Debug\Snake.Properties.Resources.resources
+D:\Users\Desktop\SnakeGame\Snake\obj\x86\Debug\Snake.csproj.GenerateResource.cache
+D:\Users\Desktop\SnakeGame\Snake\obj\x86\Debug\Snake.csproj.CoreCompileInputs.cache
+D:\Users\Desktop\SnakeGame\Snake\obj\x86\Debug\Snake.exe
+D:\Users\Desktop\SnakeGame\Snake\obj\x86\Debug\Snake.pdb
