@@ -4,11 +4,17 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Media;
 using WMPLib;
+using PathFindingAStart;
 
 namespace Snake
 {
     public partial class Form1 : Form
     {
+
+        WindowsMediaPlayer player = new WindowsMediaPlayer();
+        WindowsMediaPlayer player2 = new WindowsMediaPlayer();
+
+
         // Enemy AI parts
         private List<Circle> openList = new List<Circle>();
         private List<Circle> closedList = new List<Circle>();
@@ -37,6 +43,8 @@ namespace Snake
         private static bool runOnceHP = true;
         private static bool runSpecial = true;
         private static bool brickDamage;
+        private int maxXPos;
+        private int maxYPos;
 
 
         public Form1()
@@ -58,7 +66,12 @@ namespace Snake
 
         private void StartGame()
         {
+            maxXPos = pbCanvas.Size.Width / Settings.Width;
+            maxYPos = pbCanvas.Size.Height / Settings.Height;
+
             lblGameOver.Visible = false;
+
+            PlayBackgroundMusic();
 
             //Set settings to default
             new Settings();
@@ -91,27 +104,18 @@ namespace Snake
         //Place random food object
         private void GenerateFood()
         {
-            int maxXPos = pbCanvas.Size.Width / Settings.Width;
-            int maxYPos = pbCanvas.Size.Height / Settings.Height;
-
             Random random = new Random();
             food = new Circle { X = random.Next(0, maxXPos), Y = random.Next(0, maxYPos) };
         }
 
         private void GenerateSpecialFood()
         {
-            int maxXPos = pbCanvas.Size.Width / Settings.Width;
-            int maxYPos = pbCanvas.Size.Height / Settings.Height;
-
             Random random2 = new Random();
             specialFood = new Circle { X = random2.Next(0, maxXPos), Y = random2.Next(0, maxYPos) };
         }
 
         private void GenerateSlowFood()
         {
-            int maxXPos = pbCanvas.Size.Width / Settings.Width;
-            int maxYPos = pbCanvas.Size.Height / Settings.Height;
-
             Random random3 = new Random();
             slowFood = new Circle { X = random3.Next(0, maxXPos), Y = random3.Next(0, maxYPos) };
 
@@ -119,9 +123,6 @@ namespace Snake
 
         private void GenerateFastFood()
         {
-            int maxXPos = pbCanvas.Size.Width / Settings.Width;
-            int maxYPos = pbCanvas.Size.Height / Settings.Height;
-
             Random random4 = new Random();
             fastFood = new Circle { X = random4.Next(0, maxXPos), Y = random4.Next(0, maxYPos) };
 
@@ -129,9 +130,6 @@ namespace Snake
 
         private void GenerateHealthFood()
         {
-            int maxXPos = pbCanvas.Size.Width / Settings.Width;
-            int maxYPos = pbCanvas.Size.Height / Settings.Height;
-
             Random random4 = new Random();
             HealthFood = new Circle { X = random4.Next(0, maxXPos), Y = random4.Next(0, maxYPos) };
         }
@@ -160,12 +158,9 @@ namespace Snake
                 else if (Input.KeyPressed(Keys.Down) && Settings.direction != Direction.Up)
                     Settings.direction = Direction.Down;
 
-                //if (Math.Abs(Snake[0].X - enemyAI.X) >= 5)
-                //    PathFinding();
+                PathFinding();
                 MoveBrick();
                 MovePlayer();
-
-
             }
 
             pbCanvas.Invalidate();
@@ -303,9 +298,6 @@ namespace Snake
             fourBrickObs[3].X = fourBrickObs[0].X + 1;
             fourBrickObs[3].Y = fourBrickObs[0].Y + 1;
 
-            int maxXPos = pbCanvas.Size.Width / Settings.Width;
-            int maxYPos = pbCanvas.Size.Height / Settings.Height;
-
             for (int i = 0; i < 4; i++)
             {
                 if (fourBrickObs[i].X < 0)
@@ -349,11 +341,6 @@ namespace Snake
                             Snake[i].Y++;
                             break;
                     }
-
-
-                    //Get maximum X and Y Pos
-                    int maxXPos = pbCanvas.Size.Width / Settings.Width;
-                    int maxYPos = pbCanvas.Size.Height / Settings.Height;
 
                     if (Snake[i].X < 0)
                     {
@@ -418,8 +405,12 @@ namespace Snake
                         {
                             PlayYummy();
 
-                            Settings.Speed += 7;
-                            gameTimer.Interval = 3000 / Settings.Speed;
+                            // Set limitation of speed
+                            if(Settings.Speed <= Settings.MAX_SPEED)
+                            {
+                                Settings.Speed += 7;
+                                gameTimer.Interval = 3000 / Settings.Speed;
+                            }
                             runOnceFast = false;
                         }
                         // Detect collision with Health Food
@@ -550,13 +541,13 @@ namespace Snake
             {
                 GenerateFood();
 
-            } while ((food.X == Portal_1.X && food.Y == Portal_2.Y) ||
+            } while ((food.X == Portal_1.X && food.Y == Portal_1.Y) ||
                      food.X == Portal_2.X && food.Y == Portal_2.Y);
 
 
             if (Settings.Score != 0)
             {
-                if (Settings.Score % 500 == 0)
+                if (Settings.Score % 500 == 0 && Settings.Speed < Settings.MAX_SPEED)
                 {
                     Settings.Speed += 10;
                     gameTimer.Interval = 3000 / Settings.Speed;
@@ -574,7 +565,9 @@ namespace Snake
                             {
                                 GenerateSpecialFood();
 
-                            } while (food.X == specialFood.X && food.Y == specialFood.Y);
+                            } while ((food.X == specialFood.X && food.Y == specialFood.Y) ||
+                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
+                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
 
                             break;
                         case 1:
@@ -583,7 +576,9 @@ namespace Snake
                             {
                                 GenerateSlowFood();
 
-                            } while (food.X == slowFood.X && food.Y == slowFood.Y);
+                            } while ((food.X == slowFood.X && food.Y == slowFood.Y) ||
+                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
+                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
 
                             break;
                         case 2:
@@ -592,7 +587,9 @@ namespace Snake
                             {
                                 GenerateFastFood();
 
-                            } while (food.X == fastFood.X && food.Y == fastFood.Y);
+                            } while ((food.X == fastFood.X && food.Y == fastFood.Y) ||
+                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
+                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
 
                             break;
 
@@ -602,7 +599,9 @@ namespace Snake
                             {
                                 GenerateHealthFood();
 
-                            } while (food.X == HealthFood.X && food.Y == HealthFood.Y);
+                            } while ((food.X == HealthFood.X && food.Y == HealthFood.Y) ||
+                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_1.Y) ||
+                                     (specialFood.X == Portal_1.X && specialFood.Y == Portal_2.Y));
 
                             break;
                     }
@@ -627,30 +626,52 @@ namespace Snake
 
         private void PlayYummy()
         {
-            WindowsMediaPlayer player = new WindowsMediaPlayer();
-            player.URL = "D:/Users/Desktop/Sound Effect/mYum01.mp3";
-
+            player2.URL = "D:/Users/Desktop/Sound Effect/mYum01.mp3";
+            player.settings.volume = 55;
             // Adjust Window Media Player's Volume
-            while (player.settings.volume > 55)
+            player2.controls.play();
+        }
+
+        private void PlayBackgroundMusic()
+        {
+            player.URL = "D:/Users/Desktop/Sound Effect/hk.mp3";
+            while (player.settings.volume > 40)
                 player.settings.volume -= 2;
 
-            while (player.settings.volume < 40)
+            while (player.settings.volume < 35)
                 player.settings.volume += 2;
+
             player.controls.play();
         }
 
-
-        /* Ignore bottom part, not yet finished */
-        /* This is the part of Enemy AI */
-        /* It is messy now, just ignore it */
         
+        private void PathFinding()
+        {
+            var grid = new SquareGrid(maxXPos, maxYPos);
+
+            var astar = new AStarSearch(grid, new Location(enemyAI.X, enemyAI.Y), 
+                                              new Location(Portal_1.X, Portal_1.Y));
+
+            var checkAstar = astar;
+            foreach (var astr in checkAstar.cameFrom)
+            {
+                Location id = new Location(enemyAI.X, enemyAI.Y);
+                Location ptr = id;
+                if (!astar.cameFrom.TryGetValue(id, out ptr))
+                {
+                    ptr = id;
+                }
+            }
+
+        }
+
         //private void PathFinding()
         //{
         //    // Starting point
         //    Circle startNode = new Circle { X = enemyAI.X, Y = enemyAI.Y };
         //    openList.Add(startNode);
 
-          
+
         //    // Target point
         //    Circle targetNode = FindTargetNode(startNode);
 
@@ -816,7 +837,5 @@ namespace Snake
 
         //    return targetNode;
         //}
-
-        
     }
 }
