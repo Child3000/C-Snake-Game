@@ -7,7 +7,7 @@
         public int Gvalue { get; set; }
         public int Hvalue { get; set; }
         public int Fvalue { get; set; }
-        public Circle parent;       // class is reference type
+        // public Circle parent;       // class is reference type
 
         public Circle ()
         {

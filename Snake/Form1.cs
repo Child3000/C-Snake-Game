@@ -4,16 +4,16 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Media;
 using WMPLib;
-using PathFindingAStart;
+using System.Windows.Threading;
 
 namespace Snake
 {
     public partial class Form1 : Form
     {
-
+        #region Global Declaration
         WindowsMediaPlayer player = new WindowsMediaPlayer();
         WindowsMediaPlayer player2 = new WindowsMediaPlayer();
-        string url = "D:/Users/Desktop/SnakeGame/Sound Effect/";
+        string url = "D:/Users/Desktop/Sound Effect/";
 
 
         // Enemy AI parts
@@ -46,7 +46,7 @@ namespace Snake
         private static bool brickDamage;
         private int maxXPos;
         private int maxYPos;
-
+        #endregion
 
         public Form1()
         {
@@ -56,10 +56,19 @@ namespace Snake
             new Settings();
 
             //Set game speed and start timer
-
             gameTimer.Interval = 3000 / Settings.Speed;
             gameTimer.Tick += UpdateScreen;
             gameTimer.Start();
+
+            // Set white enemy's speed
+            DispatcherTimer dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
+            dispatcherTimer.Tick += delegate (object s, EventArgs args)
+            {
+                PathFinding();
+            };
+
+            dispatcherTimer.Start();
 
             //Start New game
             StartGame();
@@ -159,7 +168,7 @@ namespace Snake
                 else if (Input.KeyPressed(Keys.Down) && Settings.direction != Direction.Up)
                     Settings.direction = Direction.Down;
 
-                PathFinding();
+                // PathFinding();
                 MoveBrick();
                 MovePlayer();
             }
@@ -646,23 +655,66 @@ namespace Snake
         
         private void PathFinding()
         {
-            var grid = new SquareGrid(maxXPos, maxYPos);
+            int distanceX = Math.Abs(Snake[0].X - enemyAI.X);
+            int distanceY = Math.Abs(Snake[0].Y - enemyAI.Y);
 
-            var astar = new AStarSearch(grid, new Location(enemyAI.X, enemyAI.Y), 
-                                              new Location(Portal_1.X, Portal_1.Y));
-
-            var checkAstar = astar;
-            foreach (var astr in checkAstar.cameFrom)
+            if (distanceX > distanceY)
             {
-                Location id = new Location(enemyAI.X, enemyAI.Y);
-                Location ptr = id;
-                if (!astar.cameFrom.TryGetValue(id, out ptr))
-                {
-                    ptr = id;
-                }
+                if (Snake[0].X < enemyAI.X)
+                    enemyAI.X--;
+
+                else if (Snake[0].X > enemyAI.X)
+                    enemyAI.X++;
+            }
+            else
+            {
+                if (Snake[0].Y < enemyAI.Y)
+                    enemyAI.Y--;
+
+                else if (Snake[0].Y > enemyAI.Y)
+                    enemyAI.Y++;
             }
 
+
+
+            // Boardless 
+            if (enemyAI.X < 0)
+            {
+                enemyAI.X = maxXPos;
+            }
+            else if (enemyAI.Y < 0)
+            {
+                enemyAI.Y = maxYPos;
+            }
+            else if (enemyAI.X >= maxXPos)
+            {
+                enemyAI.X = 0;
+            }
+            else if (enemyAI.Y >= maxYPos)
+            {
+                enemyAI.Y = 0;
+            }
         }
+
+        //private void PathFinding()
+        //{
+        //    var grid = new SquareGrid(maxXPos, maxYPos);
+
+        //    var astar = new AStarSearch(grid, new Location(enemyAI.X, enemyAI.Y), 
+        //                                      new Location(Portal_1.X, Portal_1.Y));
+
+        //    var checkAstar = astar;
+        //    foreach (var astr in checkAstar.cameFrom)
+        //    {
+        //        Location id = new Location(enemyAI.X, enemyAI.Y);
+        //        Location ptr = id;
+        //        if (!astar.cameFrom.TryGetValue(id, out ptr))
+        //        {
+        //            ptr = id;
+        //        }
+        //    }
+
+        //}
 
         //private void PathFinding()
         //{
