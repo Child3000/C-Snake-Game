@@ -40,6 +40,7 @@
             BonusPoints = 300;
             GameOver = false;
             direction = Direction.Down;
+
             // Set lives to 3
             Lives = 3;
             MoveLeft = MAX_MOVE;
