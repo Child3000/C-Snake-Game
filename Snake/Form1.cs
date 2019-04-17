@@ -11,17 +11,19 @@ namespace Snake
     public partial class Form1 : Form
     {
         #region Global Declaration
+
         WindowsMediaPlayer player = new WindowsMediaPlayer();
         WindowsMediaPlayer player2 = new WindowsMediaPlayer();
         string url = "D:/Users/Desktop/Sound Effect/";
 
+        #region EnemyAI
 
-        // Enemy AI parts
         private List<Circle> openList = new List<Circle>();
         private List<Circle> closedList = new List<Circle>();
 
         private Circle enemyAI = new Circle();
-        // Enemy AI parts
+
+        #endregion
 
 
         private List<Circle> Snake = new List<Circle>();
@@ -35,7 +37,7 @@ namespace Snake
         private Circle Portal_1 = new Circle();
         private Circle Portal_2 = new Circle();
 
-        // Obstacles
+        //  Obstacles   //
         private Circle[] fourBrickObs = new Circle[4];
 
         private int RandomNum;
@@ -46,21 +48,22 @@ namespace Snake
         private static bool brickDamage;
         private int maxXPos;
         private int maxYPos;
+
         #endregion
 
         public Form1()
         {
             InitializeComponent();
 
-            //Set settings to default
+            //  Set settings to default //
             new Settings();
 
-            //Set game speed and start timer
+            //  Setting game speed  //
             gameTimer.Interval = 3000 / Settings.Speed;
             gameTimer.Tick += UpdateScreen;
             gameTimer.Start();
 
-            // Set white enemy's speed
+            // Setting enemyAl  //
             DispatcherTimer dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
             dispatcherTimer.Tick += delegate (object s, EventArgs args)
@@ -70,7 +73,7 @@ namespace Snake
 
             dispatcherTimer.Start();
 
-            //Start New game
+            //  Start New Game  //
             StartGame();
         }
 
@@ -83,47 +86,52 @@ namespace Snake
 
             PlayBackgroundMusic();
 
-            //Set settings to default
+            //  Setting to default  //
             new Settings();
             gameTimer.Interval = 3000 / Settings.Speed;
 
-            //Create new player object
+            //  Create New Player Object    //
             Snake.Clear();
             Circle head = new Circle { X = 10, Y = 5 };
             Snake.Add(head);
 
-            //Create enemy AI
+            //  Create Enemy AI //
             enemyAI = new Circle { X = 15, Y = 15 };
 
-            // Set portals position
+            // Setting Portals' Position    //
             Portal_1 = new Circle { X = 5, Y = 5 };
             Portal_2 = new Circle { X = 25, Y = 20 };
 
-            // Set Bricks position
+            // Setting Bricks Position  //
             fourBrickObs[0] = new Circle { X = 12, Y = 14 };
             fourBrickObs[1] = new Circle { X = fourBrickObs[0].X + 1, Y = fourBrickObs[0].Y };
             fourBrickObs[2] = new Circle { X = fourBrickObs[0].X, Y = fourBrickObs[0].Y + 1 };
             fourBrickObs[3] = new Circle { X = fourBrickObs[0].X + 1, Y = fourBrickObs[0].Y + 1 };
 
+            //  Initialize Score and HP //
             lblScore.Text = Settings.Score.ToString();
             aLabelHP.Text = Settings.Lives.ToString();
             aLabelMoveLeft.Text = Settings.MoveLeft.ToString();
+
+            //  Initialize Food Position    //
             GenerateFood();
         }
 
-        //Place random food object
+        /* Function Description : Generate Food at Random Position */
         private void GenerateFood()
         {
             Random random = new Random();
             food = new Circle { X = random.Next(0, maxXPos), Y = random.Next(0, maxYPos) };
         }
 
+        /* Function Description : Generate Special Food at Random Position */
         private void GenerateSpecialFood()
         {
             Random random2 = new Random();
             specialFood = new Circle { X = random2.Next(0, maxXPos), Y = random2.Next(0, maxYPos) };
         }
 
+        /* Function Description : Generate Slow Food at Random Position */
         private void GenerateSlowFood()
         {
             Random random3 = new Random();
@@ -131,6 +139,7 @@ namespace Snake
 
         }
 
+        /* Function Description : Generate Fast Food at Random Position */
         private void GenerateFastFood()
         {
             Random random4 = new Random();
@@ -138,20 +147,19 @@ namespace Snake
 
         }
 
+        /* Function Description : Generate Health Food at Random Position */
         private void GenerateHealthFood()
         {
             Random random4 = new Random();
             HealthFood = new Circle { X = random4.Next(0, maxXPos), Y = random4.Next(0, maxYPos) };
         }
 
-
+        /* Function Description : Invoke the function each every time intervals */
         private void UpdateScreen(object sender, EventArgs e)
         {
-
-            //Check for Game Over
+            //  Handling GameOver   //
             if (Settings.GameOver)
             {
-                //Check if Enter is pressed
                 if (Input.KeyPressed(Keys.Enter))
                 {
                     StartGame();
@@ -168,7 +176,6 @@ namespace Snake
                 else if (Input.KeyPressed(Keys.Down) && Settings.direction != Direction.Up)
                     Settings.direction = Direction.Down;
 
-                // PathFinding();
                 MoveBrick();
                 MovePlayer();
             }
@@ -176,30 +183,26 @@ namespace Snake
             pbCanvas.Invalidate();
         }
 
+        /* Function Description : Update the graphic each every time intervals  */
         private void pbCanvas_Paint(object sender, PaintEventArgs e)
         {
             Graphics canvas = e.Graphics;
 
             if (!Settings.GameOver)
             {
-                //Set colour of snake
-
-                //Draw snake
                 for (int i = 0; i < Snake.Count; i++)
                 {
                     Brush snakeColour;
                     if (i == 0)
-                        snakeColour = Brushes.Black;     //Draw head
+                        snakeColour = Brushes.Black;     // Draw head
                     else
-                        snakeColour = Brushes.Green;    //Rest of body
+                        snakeColour = Brushes.Green;    //  Draw rest of body
 
-                    //Draw snake
+                    //  Draw snake
                     canvas.FillRectangle(snakeColour,
                         new Rectangle(Snake[i].X * Settings.Width,
                                       Snake[i].Y * Settings.Height,
                                       Settings.Width, Settings.Height));
-
-                    bool specialFoodAppear = Settings.Score % 500 == 0 && Settings.Score != 0;
 
                     // Draw EnemyAI
                     canvas.FillRectangle(Brushes.GhostWhite,
@@ -207,12 +210,15 @@ namespace Snake
                                          enemyAI.Y * Settings.Height,
                                          Settings.Width, Settings.Height);
 
-                    // Draw Special Food / Fast Food / Slow Food
+                    // Draw Special Food, Fast Food and Slow Food
+                    bool specialFoodAppear = Settings.Score % 500 == 0 && Settings.Score != 0;
+
                     if (specialFoodAppear)
                     {
                         switch (RandomNum)
                         {
                             case 0:
+                                //  Special Food
                                 canvas.FillRectangle(Brushes.Yellow,
                                  new Rectangle(specialFood.X * Settings.Width,
                                  specialFood.Y * Settings.Height,
@@ -222,6 +228,7 @@ namespace Snake
                             case 1:
                                 if (runOnce)
                                 {
+                                    //  Slow Food
                                     canvas.FillRectangle(Brushes.Purple,
                                     new Rectangle(slowFood.X * Settings.Width,
                                     slowFood.Y * Settings.Height,
@@ -234,6 +241,7 @@ namespace Snake
                             case 2:
                                 if (runOnceFast)
                                 {
+                                    //  Fast Food
                                     canvas.FillRectangle(Brushes.Cyan,
                                     new Rectangle(fastFood.X * Settings.Width,
                                     fastFood.Y * Settings.Height,
@@ -247,18 +255,17 @@ namespace Snake
                             case 3:
                                 if (runOnceHP)
                                 {
+                                    //  Health Food
                                     canvas.FillRectangle(Brushes.Orange,
                                     new Rectangle(HealthFood.X * Settings.Width,
                                     HealthFood.Y * Settings.Height,
                                     Settings.Width, Settings.Height));
-
                                 }
-
                                 break;
                         }
                     }
 
-                    //Draw Food
+                    //  Draw ordinary food
                     canvas.FillRectangle(Brushes.Red,
                         new Rectangle(food.X * Settings.Width,
                              food.Y * Settings.Height,
@@ -333,7 +340,7 @@ namespace Snake
         {
             for (int i = Snake.Count - 1; i >= 0; i--)
             {
-                //Move head
+                //  Move head
                 if (i == 0)
                 {
                     switch (Settings.direction)
@@ -369,7 +376,7 @@ namespace Snake
                         Snake[i].Y = 0;
                     }
 
-                    // Detect collision with Portals
+                    //  Detect collision with Portals
                     if (Snake[i].X == Portal_1.X &&
                        Snake[i].Y == Portal_1.Y)
                     {
@@ -386,7 +393,7 @@ namespace Snake
 
                     if (Settings.Score % 500 == 0 && Settings.Score != 0)
                     {
-                        // Detect collision with Special Food
+                        //  Detect collision with Special Food
                         if (Snake[i].X == specialFood.X &&
                            Snake[i].Y == specialFood.Y &&
                            runSpecial)
@@ -408,6 +415,7 @@ namespace Snake
                             gameTimer.Interval = 3000 / Settings.Speed;
                             runOnce = false;
                         }
+
                         // Detect collision with Fast Food
                         else if (Snake[i].X == fastFood.X &&
                                 Snake[i].Y == fastFood.Y &&
@@ -423,6 +431,7 @@ namespace Snake
                             }
                             runOnceFast = false;
                         }
+
                         // Detect collision with Health Food
                         else if (Snake[i].X == HealthFood.X &&
                                 Snake[i].Y == HealthFood.Y &&
@@ -462,7 +471,7 @@ namespace Snake
                         }
                     }
 
-                    //Detect collision with body
+                    //  Detect collision with body
                     for (int j = 1; j < Snake.Count; j++)
                     {
                         if (Snake[i].X == Snake[j].X &&
@@ -472,7 +481,7 @@ namespace Snake
                         }
                     }
 
-                    //Detect collision with food piece
+                    //  Detect collision with food piece
                     if (Snake[0].X == food.X && Snake[0].Y == food.Y)
                     {
                         Eat();
@@ -481,7 +490,7 @@ namespace Snake
                 }
                 else
                 {
-                    //Move body
+                    //  Move body
                     Snake[i].X = Snake[i - 1].X;
                     Snake[i].Y = Snake[i - 1].Y;
                 }
@@ -530,11 +539,11 @@ namespace Snake
             player[0] = new SoundPlayer( url + "wEat01.wav");
             player[1] = new SoundPlayer(url + "wEat02.wav");
             player[2] = new SoundPlayer(url + "wEat03.wav");
-
-            //player[ranSoundNum] = new SoundPlayer();
+            
+            // Play Sound
             player[ranSoundNum].Play();
 
-            //Add circle to body
+            //  Add circle to body
             Circle circle = new Circle
             {
                 X = Snake[Snake.Count - 1].X,
@@ -542,11 +551,11 @@ namespace Snake
             };
             Snake.Add(circle);
 
-            //Update Score
+            //  Update Score
             Settings.Score += Settings.Points;
             lblScore.Text = Settings.Score.ToString();
 
-            // Generate food before special Food generated
+            // Generate Food
             do
             {
                 GenerateFood();
@@ -635,8 +644,9 @@ namespace Snake
         private void PlayYummy()
         {
             player2.URL = url + "mYum01.mp3";
-            player.settings.volume = 55;
+
             // Adjust Window Media Player's Volume
+            player.settings.volume = 55;
             player2.controls.play();
         }
 
@@ -695,198 +705,5 @@ namespace Snake
                 enemyAI.Y = 0;
             }
         }
-
-        //private void PathFinding()
-        //{
-        //    var grid = new SquareGrid(maxXPos, maxYPos);
-
-        //    var astar = new AStarSearch(grid, new Location(enemyAI.X, enemyAI.Y), 
-        //                                      new Location(Portal_1.X, Portal_1.Y));
-
-        //    var checkAstar = astar;
-        //    foreach (var astr in checkAstar.cameFrom)
-        //    {
-        //        Location id = new Location(enemyAI.X, enemyAI.Y);
-        //        Location ptr = id;
-        //        if (!astar.cameFrom.TryGetValue(id, out ptr))
-        //        {
-        //            ptr = id;
-        //        }
-        //    }
-
-        //}
-
-        //private void PathFinding()
-        //{
-        //    // Starting point
-        //    Circle startNode = new Circle { X = enemyAI.X, Y = enemyAI.Y };
-        //    openList.Add(startNode);
-
-
-        //    // Target point
-        //    Circle targetNode = FindTargetNode(startNode);
-
-        //    int i = 0; // Debugging purpose
-
-
-        //    //// Loop
-        //    //while (openList.Count > 0 && i != 1000)
-        //    //{
-        //    // Get node with lowest z value
-        //    Circle node = FindNodeLowestF();
-        //    if (node.X == startNode.X)
-        //    {
-        //        GetPath(startNode, startNode);
-        //        return;
-        //    }
-        //    // Check if the node is target's node
-        //    if (node.X == targetNode.X &&
-        //       node.Y == targetNode.Y)
-        //    {
-        //        GetPath(node, startNode);
-        //        //break;
-        //    }
-
-        //    // remove node from openList
-        //    // then add it in closedList
-        //    openList.Remove(node);
-        //    closedList.Add(node);
-
-
-        //    List<Circle> neighbours = GetNeighbours(node);
-
-        //    foreach (Circle n in neighbours)
-        //    {
-        //        if (!((n.X == Portal_1.X && n.Y == Portal_1.Y) ||
-        //             (n.X == Portal_2.X && n.Y == Portal_2.Y) ||
-        //              closedList.Contains(n)))
-        //        {
-        //            if (!openList.Contains(n))
-        //            {
-        //                openList.Add(n);
-        //                n.parent = node;
-
-        //                // Calculate G, H, and F
-        //                n.Gvalue = node.Gvalue + 10;
-        //                n.Hvalue = CalculateManhattanDistance(n, targetNode);
-        //                n.Fvalue = n.Gvalue + n.Hvalue;
-        //            }
-        //            else
-        //            {
-        //                if (node.Gvalue + 10 < n.Gvalue)
-        //                {
-        //                    n.parent = node;
-
-        //                    // Recalculate G & F
-        //                    n.Gvalue = node.Gvalue + 10;
-        //                    n.Fvalue = n.Gvalue + n.Hvalue;
-        //                }
-        //            }
-        //        }
-        //    }
-        //    //    i++;
-        //    //}
-        //    // If it is not on the open list, add it to open list. 
-        //    // Make the currentNode parent to this square
-        //    // Record F, G, and H costs of square
-
-        //    // It if it on open list, check to see if this path to that square is better
-        //    // If it has lower G cost in total, change parent to the current square
-        //    // Recalculate G & F
-
-        //    // Loop stop when
-        //    // Target square is in closed list
-        //    // Or open list is empty
-        //}
-
-        //private void GetPath (Circle targetNode, Circle startNode)
-        //{
-        //    //Circle nextNode = targetNode;
-
-        //    //while(nextNode.parent != startNode)
-        //    //{
-        //    //    nextNode = nextNode.parent;
-        //    //}
-
-        //    //// Move enemyAI one step forward
-        //    //enemyAI.X = nextNode.X;
-        //    //enemyAI.Y = nextNode.Y;
-
-        //    enemyAI.X++;
-        //    enemyAI.Y++;
-        //}
-
-        //private int CalculateManhattanDistance(Circle currentNode, Circle targetNode)
-        //{
-        //    int currentToTargetDistanceX = Math.Abs(targetNode.X - currentNode.X);
-        //    int currentToTargetDistanceY = Math.Abs(targetNode.Y - currentNode.Y);
-        //    int sumCurrentToTargetDistance = currentToTargetDistanceX + currentToTargetDistanceY;
-
-        //    return sumCurrentToTargetDistance;
-        //}
-
-
-        ///* Get lowest Z value and return back */
-        //private Circle FindNodeLowestF()
-        //{
-        //    Circle lowestNode = new Circle();
-        //    lowestNode.Fvalue = int.MaxValue;
-
-        //    foreach(Circle element in openList)
-        //    {
-        //        if(element.Fvalue < lowestNode.Fvalue )
-        //        {
-        //            lowestNode = element;
-        //        }
-        //    }
-        //    return lowestNode;
-        //}
-
-
-        ///* Get all the four square position from its parents */
-        //private List<Circle> GetNeighbours(Circle currentNode)
-        //{
-        //    List<Circle> neighbours = new List<Circle>();
-
-        //    Circle neighbour = new Circle { X = currentNode.X + 1, Y = currentNode.Y };
-        //    neighbours.Add(neighbour);
-
-        //    neighbour = new Circle { X = currentNode.X - 1, Y = currentNode.Y };
-        //    neighbours.Add(neighbour);
-
-        //    neighbour = new Circle { X = currentNode.X, Y = currentNode.Y + 1 };
-        //    neighbours.Add(neighbour);
-
-        //    neighbour = new Circle { X = currentNode.X, Y = currentNode.Y - 1 };
-        //    neighbours.Add(neighbour);
-
-        //    return neighbours;
-        //}
-
-
-        ///* Find the closet Target Node.
-        // * This function will decide either track snake's head or snake's tail.
-        // */
-        //private Circle FindTargetNode(Circle currentNode)
-        //{
-        //    Circle targetNode = new Circle() { X = Portal_1.X, Y = Portal_1.Y };
-
-        //    //// Find number of square needed to go to head of snake
-        //    //int distanceToHeadX = Math.Abs(currentNode.X - Snake[0].X);
-        //    //int distanceToHeadY = Math.Abs(currentNode.Y - Snake[0].Y);
-        //    //int sumDistanceToHead = distanceToHeadX + distanceToHeadY;
-
-        //    //// Find number of square needed to go to tail of snake
-        //    //int distanceToTailX = Math.Abs(currentNode.X - Snake[Snake.Count - 1].X);
-        //    //int distanceToTailY = Math.Abs(currentNode.Y - Snake[Snake.Count - 1].Y);
-        //    //int sumDistanceToTail = distanceToTailX + distanceToTailY;
-
-        //    //if (sumDistanceToHead < sumDistanceToTail)
-        //    //    targetNode = Snake[0];
-        //    //else
-        //    //    targetNode = Snake[Snake.Count - 1];
-
-        //    return targetNode;
-        //}
     }
 }
